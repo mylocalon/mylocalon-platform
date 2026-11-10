@@ -1,11 +1,11 @@
-import { ActionButton, CreateForm } from "../../_components/Actions";
+import { ActionButton, CreateForm } from "../../../_components/Actions";
 import { requireUser } from "@/auth/current";
 import { getConfig } from "@/lib/config";
 import { listProjects } from "@/services/projects";
 import { listReserved } from "@/services/subdomains";
 
 export default async function SubdomainsPage() {
-  const user = await requireUser("/subdomains");
+  const user = await requireUser("/dashboard/subdomains");
   const [subs, projects] = await Promise.all([listReserved(user.id), listProjects(user.id)]);
   const c = getConfig();
   const projectName = new Map(projects.map((p) => [p.id, p.name]));

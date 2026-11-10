@@ -1,9 +1,9 @@
-import { ActionButton, CreateKeyForm } from "../../_components/Actions";
+import { ActionButton, CreateKeyForm } from "../../../_components/Actions";
 import { requireUser } from "@/auth/current";
 import { listApiKeys } from "@/services/apiKeys";
 
 export default async function KeysPage() {
-  const user = await requireUser("/keys");
+  const user = await requireUser("/dashboard/keys");
   const keys = await listApiKeys(user.id);
   return (
     <>

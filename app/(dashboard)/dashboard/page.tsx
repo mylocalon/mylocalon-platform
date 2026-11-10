@@ -1,4 +1,4 @@
-import { AutoRefresh } from "../_components/Actions";
+import { AutoRefresh } from "../../_components/Actions";
 import { requireUser } from "@/auth/current";
 import { getConfig } from "@/lib/config";
 import { listTunnels, tunnelHistory } from "@/services/tunnels";
@@ -11,7 +11,7 @@ function tunnelUrl(sub: string) {
 }
 
 export default async function TunnelsPage() {
-  const user = await requireUser("/");
+  const user = await requireUser("/dashboard");
   const [tunnels, history] = await Promise.all([listTunnels(user.id), tunnelHistory(user.id, 20)]);
   const live = tunnels.filter((t) => t.status !== "closed");
 

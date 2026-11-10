@@ -1,9 +1,9 @@
-import { ActionButton, CreateForm } from "../../_components/Actions";
+import { ActionButton, CreateForm } from "../../../_components/Actions";
 import { requireUser } from "@/auth/current";
 import { listProjects } from "@/services/projects";
 
 export default async function ProjectsPage() {
-  const user = await requireUser("/projects");
+  const user = await requireUser("/dashboard/projects");
   const projects = await listProjects(user.id);
   return (
     <>

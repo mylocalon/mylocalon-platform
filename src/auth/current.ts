@@ -19,5 +19,5 @@ export async function requireUser(next: string): Promise<User> {
 
 /** Only allow same-site relative redirects after login. */
 export function safeNext(next: string | undefined): string {
-  return next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
+  return next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
 }

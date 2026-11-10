@@ -7,11 +7,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="shell">
       <nav className="side">
-        <div className="brand">mylocalon</div>
-        <Link href="/">Tunnels</Link>
-        <Link href="/subdomains">Subdomains</Link>
-        <Link href="/projects">Projects</Link>
-        <Link href="/keys">API keys</Link>
+        <Link href="/" className="brand">mylocalon</Link>
+        <Link href="/dashboard">Tunnels</Link>
+        <Link href="/dashboard/subdomains">Subdomains</Link>
+        <Link href="/dashboard/projects">Projects</Link>
+        <Link href="/dashboard/keys">API keys</Link>
+        <Link href="/docs">Docs</Link>
         <div className="grow" />
         {user && (
           <>
