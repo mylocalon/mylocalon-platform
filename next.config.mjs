@@ -1,6 +1,7 @@
-import type { NextConfig } from "next";
-
-const config: NextConfig = {
+// Plain JS on purpose: `next start` loads this file, and a .ts config would
+// need TypeScript installed in production (we prune dev dependencies).
+/** @type {import("next").NextConfig} */
+const config = {
   reactStrictMode: true,
   poweredByHeader: false,
   // Native / worker-thread deps must stay out of the server bundle.
