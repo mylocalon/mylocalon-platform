@@ -18,7 +18,8 @@ export async function reserveSubdomain(userId: string, rawName: string, projectI
   if (problem === "invalid") {
     throw unprocessable("subdomain must be 3–63 chars of a–z, 0–9 and single hyphens, not starting/ending with a hyphen");
   }
-  if (problem === "blocked") throw unprocessable(`"${name}" is a reserved word`);
+  if (problem === "reserved") throw unprocessable(`"${name}" is reserved for mylocalon`);
+  if (problem === "brand") throw unprocessable(`"${name}" contains a protected brand name`);
 
   const { rows: count } = await db().query(
     "SELECT count(*)::int AS n FROM reserved_subdomains WHERE user_id = $1 AND released_at IS NULL",

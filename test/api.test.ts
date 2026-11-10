@@ -184,6 +184,10 @@ describe("reserved subdomains", () => {
     expect((await call(subs.POST, "POST", "/x", { cookie: a.cookie, body: { name: "admin" } })).status).toBe(422);
     expect((await call(subs.POST, "POST", "/x", { cookie: a.cookie, body: { name: "-bad-" } })).status).toBe(422);
     expect((await call(subs.POST, "POST", "/x", { cookie: a.cookie, body: { name: "a--b" } })).status).toBe(422);
+    expect((await call(subs.POST, "POST", "/x", { cookie: a.cookie, body: { name: "staging" } })).status).toBe(422);
+    const phish = await call(subs.POST, "POST", "/x", { cookie: a.cookie, body: { name: "paypal-login" } });
+    expect(phish.status).toBe(422);
+    expect(phish.json.error.message).toMatch(/brand/);
 
     expect((await call(subByName.DELETE, "DELETE", "/x", { cookie: b.cookie, params: { name: "myapp" } })).status).toBe(404);
     expect((await call(subByName.DELETE, "DELETE", "/x", { cookie: a.cookie, params: { name: "myapp" } })).status).toBe(200);
@@ -255,8 +259,8 @@ describe("internal (Gateway) endpoints", () => {
   it("reserved names feed", async () => {
     const { cookie } = await newUser();
     await call(subs.POST, "POST", "/x", { cookie, body: { name: "zeta" } });
-    await call(subs.POST, "POST", "/x", { cookie, body: { name: "alpha" } });
-    expect((await call(reserved.GET, "GET", "/x", { bearer: INTERNAL })).json).toEqual({ names: ["alpha", "zeta"] });
+    await call(subs.POST, "POST", "/x", { cookie, body: { name: "acorn" } });
+    expect((await call(reserved.GET, "GET", "/x", { bearer: INTERNAL })).json).toEqual({ names: ["acorn", "zeta"] });
   });
 
   it("tunnel events → dashboard status + history", async () => {

@@ -25,8 +25,15 @@ reservations the next time they connect — no new login needed.
 
 - 3–63 characters: lowercase letters, numbers and hyphens
 - Can't start or end with a hyphen, or contain `--`
-- Some names are reserved for mylocalon itself (`www`, `api`, `admin`,
-  `gateway`, `app`, `dashboard`, `docs`, `status`, `mail`, …)
+- **Reserved names** can't be claimed by anyone: mylocalon's own surfaces
+  (`www`, `api`, `docs`, `status`, `gateway`, `mylocalon`), account and billing
+  words (`login`, `account`, `secure`, `billing`), environment names
+  (`staging`, `prod`, `dev`, `demo`, `beta`) and privileged words (`admin`,
+  `root`, `official`)
+- **Brand protection:** names that contain a well-known brand as a
+  hyphen-separated word are refused too — `paypal-login`, `secure-gmail-verify`
+  and `my-icloud` all fail. This keeps tunnels from being used for phishing on a
+  trusted HTTPS domain. Names that merely *contain* the letters (`applepie`) are fine.
 - First come, first served — a name held by someone else can't be reserved
 
 The free plan includes **5 reserved subdomains**. Group them by **project** in

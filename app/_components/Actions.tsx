@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { IconLogout, IconPlus } from "../_site/icons";
 import { confirmDialog, CopyButton, toast } from "../_site/ui";
 import { api } from "./api";
+import { checkSubdomain } from "@/domain/subdomain";
 
 /** A button that calls the API (optionally after a styled confirm), then refreshes server data. */
 export function ActionButton(props: {
@@ -41,10 +42,7 @@ export function ActionButton(props: {
   );
 }
 
-/** Mirrors src/domain/subdomain.ts so the form can validate as you type. */
-const LABEL = /^[a-z0-9]([a-z0-9-]{1,61}[a-z0-9])$/;
-const BLOCKED = new Set(["www", "api", "admin", "gateway", "app", "dashboard", "mail", "smtp", "status", "docs", "static", "cdn", "auth", "login", "billing", "support", "help", "blog", "root", "ns1", "ns2"]);
-
+/** Same rules as the server (src/domain/subdomain.ts), with friendlier messages. */
 function subdomainProblem(v: string): string | null {
   if (!v) return null;
   if (/[^a-z0-9-]/.test(v)) return "Only lowercase letters, numbers and hyphens";
@@ -52,8 +50,10 @@ function subdomainProblem(v: string): string | null {
   if (v.length > 63) return "At most 63 characters";
   if (v.startsWith("-") || v.endsWith("-")) return "Can't start or end with a hyphen";
   if (v.includes("--")) return "No double hyphens";
-  if (BLOCKED.has(v)) return `“${v}” is reserved for mylocalon`;
-  return LABEL.test(v) ? null : "Not a valid name";
+  const p = checkSubdomain(v);
+  if (p === "reserved") return `“${v}” is reserved for mylocalon`;
+  if (p === "brand") return "Contains a protected brand name — pick something that's yours";
+  return p === "invalid" ? "Not a valid name" : null;
 }
 
 /**
