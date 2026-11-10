@@ -2,91 +2,102 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { IconLogout, IconPlus } from "../_site/icons";
+import { confirmDialog, CopyButton, toast } from "../_site/ui";
 import { api } from "./api";
 
-/** A button that calls the API, then refreshes server data. */
+/** A button that calls the API (optionally after a styled confirm), then refreshes server data. */
 export function ActionButton(props: {
   method: string;
   path: string;
   body?: unknown;
   label: string;
-  confirm?: string;
+  confirm?: { title: string; body?: string; confirm?: string };
+  success?: string;
   className?: string;
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   return (
     <button
-      className={props.className ?? "danger"}
+      className={props.className ?? "btn btn-danger btn-sm"}
       disabled={busy}
       onClick={async () => {
-        if (props.confirm && !window.confirm(props.confirm)) return;
+        if (props.confirm && !(await confirmDialog({ ...props.confirm, danger: true }))) return;
         setBusy(true);
         try {
           await api(props.method, props.path, props.body);
+          if (props.success) toast(props.success);
           router.refresh();
         } catch (e) {
-          window.alert((e as Error).message);
+          toast((e as Error).message, "bad");
         } finally {
           setBusy(false);
         }
       }}
     >
-      {props.label}
+      {busy ? "…" : props.label}
     </button>
   );
 }
 
-/** Single-field create form (projects, subdomains). */
+/** Single-field create form (projects, subdomains), optional suffix and select. */
 export function CreateForm(props: {
   path: string;
   field: string;
   placeholder: string;
   label: string;
-  extra?: { name: string; options: { value: string; label: string }[] };
+  success: (value: string) => string;
+  suffix?: string;
+  extra?: { name: string; label: string; options: { value: string; label: string }[] };
 }) {
   const router = useRouter();
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
   return (
-    <>
-      <form
-        className="row"
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const form = e.currentTarget;
-          const f = new FormData(form);
-          const body: Record<string, unknown> = { [props.field]: f.get(props.field) };
-          const extra = props.extra && f.get(props.extra.name);
-          if (props.extra && extra) body[props.extra.name] = extra;
-          setBusy(true);
-          setError(undefined);
-          try {
-            await api("POST", props.path, body);
-            form.reset();
-            router.refresh();
-          } catch (err) {
-            setError((err as Error).message);
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        <input name={props.field} placeholder={props.placeholder} required aria-label={props.placeholder} />
-        {props.extra && (
-          <select name={props.extra.name} aria-label={props.extra.name} defaultValue="">
+    <form
+      className="card"
+      onSubmit={async (e) => {
+        e.preventDefault();
+        const form = e.currentTarget;
+        const f = new FormData(form);
+        const value = String(f.get(props.field) ?? "");
+        const body: Record<string, unknown> = { [props.field]: value };
+        const extra = props.extra && f.get(props.extra.name);
+        if (props.extra && extra) body[props.extra.name] = extra;
+        setBusy(true);
+        setError(undefined);
+        try {
+          await api("POST", props.path, body);
+          form.reset();
+          toast(props.success(value));
+          router.refresh();
+        } catch (err) {
+          setError((err as Error).message);
+        } finally {
+          setBusy(false);
+        }
+      }}
+    >
+      <div className="row">
+        {props.suffix ? (
+          <div className="input-group" style={{ flex: "1 1 260px" }}>
+            <input name={props.field} placeholder={props.placeholder} required aria-label={props.placeholder} autoComplete="off" spellCheck={false} />
+            <span className="addon">{props.suffix}</span>
+          </div>
+        ) : (
+          <input name={props.field} placeholder={props.placeholder} required aria-label={props.placeholder} style={{ flex: "1 1 260px" }} />
+        )}
+        {props.extra && props.extra.options.length > 0 && (
+          <select name={props.extra.name} aria-label={props.extra.label} defaultValue="">
             <option value="">No project</option>
-            {props.extra.options.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
+            {props.extra.options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
         )}
-        <button disabled={busy}>{props.label}</button>
-      </form>
-      {error && <p className="err">{error}</p>}
-    </>
+        <button className="btn btn-primary" disabled={busy}><IconPlus size={16} /> {props.label}</button>
+      </div>
+      {error && <p className="err" role="alert">{error}</p>}
+    </form>
   );
 }
 
@@ -95,33 +106,40 @@ export function CreateKeyForm() {
   const router = useRouter();
   const [secret, setSecret] = useState<string>();
   const [error, setError] = useState<string>();
+  const [busy, setBusy] = useState(false);
   return (
     <>
       <form
-        className="row"
+        className="card"
         onSubmit={async (e) => {
           e.preventDefault();
           const form = e.currentTarget;
           setError(undefined);
+          setBusy(true);
           try {
             const r = await api<{ secret: string }>("POST", "/api/v1/keys", { name: new FormData(form).get("name") });
             setSecret(r.secret);
             form.reset();
+            toast("API key created — copy it now");
             router.refresh();
           } catch (err) {
             setError((err as Error).message);
+          } finally {
+            setBusy(false);
           }
         }}
       >
-        <input name="name" placeholder="Key name, e.g. laptop" required aria-label="Key name" />
-        <button>Create key</button>
+        <div className="row">
+          <input name="name" placeholder="Key name, e.g. laptop or ci" required aria-label="Key name" style={{ flex: "1 1 260px" }} />
+          <button className="btn btn-primary" disabled={busy}><IconPlus size={16} /> Create key</button>
+        </div>
+        {error && <p className="err" role="alert">{error}</p>}
       </form>
-      {error && <p className="err">{error}</p>}
       {secret && (
-        <div className="card secret" style={{ marginTop: 12 }}>
-          <strong>Copy this key now — it won't be shown again.</strong>
-          <pre>{secret}</pre>
-          <span className="muted">Use it with </span>
+        <div className="secret-box" role="alert">
+          <strong>Copy this key now — you won&apos;t see it again.</strong>
+          <div className="cmd"><code>{secret}</code><CopyButton text={secret} /></div>
+          <span className="muted" style={{ fontSize: 13 }}>Use it with </span>
           <code>mylocalon login --api-key …</code>
         </div>
       )}
@@ -129,11 +147,11 @@ export function CreateKeyForm() {
   );
 }
 
-/** Re-renders server data periodically (live-ish tunnel status). */
+/** Re-renders server data periodically (live tunnel status). Pauses in background tabs. */
 export function AutoRefresh({ ms }: { ms: number }) {
   const router = useRouter();
   useEffect(() => {
-    const t = setInterval(() => router.refresh(), ms);
+    const t = setInterval(() => document.visibilityState === "visible" && router.refresh(), ms);
     return () => clearInterval(t);
   }, [ms, router]);
   return null;
@@ -142,13 +160,15 @@ export function AutoRefresh({ ms }: { ms: number }) {
 export function LogoutButton() {
   return (
     <button
-      className="ghost"
+      className="btn btn-quiet btn-sm btn-icon"
+      title="Log out"
+      aria-label="Log out"
       onClick={async () => {
         await api("POST", "/api/v1/auth/logout").catch(() => {});
         window.location.assign("/login");
       }}
     >
-      Log out
+      <IconLogout size={16} />
     </button>
   );
 }
@@ -156,25 +176,26 @@ export function LogoutButton() {
 export function DeviceDecision({ code }: { code: string }) {
   const [done, setDone] = useState<"approved" | "denied">();
   const [error, setError] = useState<string>();
-  if (done === "approved") return <p className="ok">✓ Approved. Return to your terminal — you're logged in.</p>;
-  if (done === "denied") return <p className="bad">Denied. The CLI login was cancelled.</p>;
+  const [busy, setBusy] = useState(false);
+  if (done === "approved") return <p className="badge ok" style={{ height: "auto", padding: "10px 14px", fontSize: 14 }}>✓ Approved — return to your terminal, you&apos;re logged in.</p>;
+  if (done === "denied") return <p className="badge bad" style={{ height: "auto", padding: "10px 14px", fontSize: 14 }}>Denied — the CLI login was cancelled.</p>;
   const decide = async (approve: boolean) => {
+    setBusy(true);
     try {
       await api("POST", "/api/v1/device/decide", { userCode: code, approve });
       setDone(approve ? "approved" : "denied");
     } catch (e) {
       setError((e as Error).message);
+      setBusy(false);
     }
   };
   return (
     <>
-      <div className="row" style={{ display: "flex", gap: 8 }}>
-        <button onClick={() => decide(true)}>Approve</button>
-        <button className="ghost" onClick={() => decide(false)}>
-          Deny
-        </button>
+      <div className="row">
+        <button className="btn btn-primary btn-lg" style={{ flex: 1 }} disabled={busy} onClick={() => decide(true)}>Approve</button>
+        <button className="btn btn-secondary btn-lg" disabled={busy} onClick={() => decide(false)}>Deny</button>
       </div>
-      {error && <p className="err">{error}</p>}
+      {error && <p className="err" role="alert">{error}</p>}
     </>
   );
 }

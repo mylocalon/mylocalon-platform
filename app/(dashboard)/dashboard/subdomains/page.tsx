@@ -1,8 +1,12 @@
 import { ActionButton, CreateForm } from "../../../_components/Actions";
+import { IconGlobe } from "../../../_site/icons";
+import { CopyButton } from "../../../_site/ui";
 import { requireUser } from "@/auth/current";
 import { getConfig } from "@/lib/config";
 import { listProjects } from "@/services/projects";
 import { listReserved } from "@/services/subdomains";
+
+export const metadata = { title: "Subdomains · mylocalon" };
 
 export default async function SubdomainsPage() {
   const user = await requireUser("/dashboard/subdomains");
@@ -11,38 +15,41 @@ export default async function SubdomainsPage() {
   const projectName = new Map(projects.map((p) => [p.id, p.name]));
   return (
     <>
-      <h1>Reserved subdomains</h1>
-      <p className="muted">
-        Keep a stable URL across restarts. Your plan allows {c.MAX_RESERVED_SUBDOMAINS}. Use with{" "}
-        <code>mylocalon http 3000 --subdomain NAME</code>. Running tunnels pick up new reservations on their next connect.
-      </p>
+      <div className="page-head">
+        <div>
+          <h1>Reserved subdomains</h1>
+          <p>Keep the same URL every time — {subs.length} of {c.MAX_RESERVED_SUBDOMAINS} used.</p>
+        </div>
+      </div>
       <CreateForm
-        path="/api/v1/subdomains"
-        field="name"
-        placeholder="myapp"
-        label="Reserve"
-        extra={{ name: "projectId", options: projects.map((p) => ({ value: p.id, label: p.name })) }}
+        path="/api/v1/subdomains" field="name" placeholder="myapp" label="Reserve" suffix={`.${c.BASE_DOMAIN}`}
+        success={(v) => `Reserved ${v.toLowerCase()}.${c.BASE_DOMAIN}`}
+        extra={{ name: "projectId", label: "Project", options: projects.map((p) => ({ value: p.id, label: p.name })) }}
       />
-      <h2>Yours</h2>
+      <div className="section-title">Yours</div>
       {subs.length === 0 ? (
-        <div className="card empty">None reserved.</div>
+        <div className="empty"><span className="empty-icon"><IconGlobe /></span><strong>No reserved subdomains</strong><span>Reserve a name above, then run <code>mylocalon http 3000 --subdomain myapp</code>.</span></div>
       ) : (
-        <table>
-          <thead>
-            <tr><th>Subdomain</th><th className="hide-sm">Project</th><th /></tr>
-          </thead>
-          <tbody>
-            {subs.map((s) => (
-              <tr key={s.id}>
-                <td><code>{s.name}.{c.BASE_DOMAIN}</code></td>
-                <td className="hide-sm muted">{s.projectId ? projectName.get(s.projectId) : "—"}</td>
-                <td style={{ textAlign: "right" }}>
-                  <ActionButton method="DELETE" path={`/api/v1/subdomains/${s.name}`} label="Release" confirm={`Release ${s.name}? Someone else may claim it.`} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="table-wrap">
+          <table className="table">
+            <thead><tr><th>Subdomain</th><th className="hide-sm">Project</th><th className="hide-sm">Use it</th><th className="actions" /></tr></thead>
+            <tbody>
+              {subs.map((s) => (
+                <tr key={s.id}>
+                  <td><code>{s.name}.{c.BASE_DOMAIN}</code></td>
+                  <td className="hide-sm muted">{s.projectId ? projectName.get(s.projectId) : "—"}</td>
+                  <td className="hide-sm"><CopyButton text={`mylocalon http 3000 --subdomain ${s.name}`} label="Copy command" /></td>
+                  <td className="actions">
+                    <ActionButton
+                      method="DELETE" path={`/api/v1/subdomains/${s.name}`} label="Release" success={`Released ${s.name}`}
+                      confirm={{ title: `Release ${s.name}.${c.BASE_DOMAIN}?`, body: "Anyone will be able to reserve this name afterwards.", confirm: "Release" }}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </>
   );

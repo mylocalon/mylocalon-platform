@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CodeCopyButtons } from "../_site/Copy";
 import { loadDoc } from "@/docs/content";
+import { DOCS_NAV } from "@/docs/nav";
 
 const EDIT_BASE = "https://github.com/mylocalon/mylocalon-platform/edit/main/content/docs";
 
@@ -12,6 +13,7 @@ export function DocView({ slug }: { slug: string }) {
     <div className="docs-page">
       <article className="docs-article">
         <header className="docs-head">
+          <div className="docs-crumb">{DOCS_NAV.find((g) => g.items.some((i) => i.slug === doc.slug))?.title}</div>
           <h1>{doc.title}</h1>
           {doc.description && <p className="docs-lead">{doc.description}</p>}
         </header>

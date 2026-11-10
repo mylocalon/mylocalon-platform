@@ -1,35 +1,48 @@
 import { ActionButton, CreateForm } from "../../../_components/Actions";
+import { IconFolder } from "../../../_site/icons";
 import { requireUser } from "@/auth/current";
 import { listProjects } from "@/services/projects";
+import { listReserved } from "@/services/subdomains";
+
+export const metadata = { title: "Projects · mylocalon" };
 
 export default async function ProjectsPage() {
   const user = await requireUser("/dashboard/projects");
-  const projects = await listProjects(user.id);
+  const [projects, subs] = await Promise.all([listProjects(user.id), listReserved(user.id)]);
+  const count = (id: string) => subs.filter((s) => s.projectId === id).length;
   return (
     <>
-      <h1>Projects</h1>
-      <p className="muted">Group reserved subdomains by project.</p>
-      <CreateForm path="/api/v1/projects" field="name" placeholder="Project name" label="Create" />
-      <h2>Yours</h2>
+      <div className="page-head">
+        <div>
+          <h1>Projects</h1>
+          <p>Group reserved subdomains, e.g. per client or app.</p>
+        </div>
+      </div>
+      <CreateForm path="/api/v1/projects" field="name" placeholder="Project name" label="Create" success={(v) => `Created project “${v}”`} />
+      <div className="section-title">Yours</div>
       {projects.length === 0 ? (
-        <div className="card empty">No projects yet.</div>
+        <div className="empty"><span className="empty-icon"><IconFolder /></span><strong>No projects yet</strong><span>Projects are optional — they just keep subdomains organised.</span></div>
       ) : (
-        <table>
-          <thead>
-            <tr><th>Name</th><th className="hide-sm">Created</th><th /></tr>
-          </thead>
-          <tbody>
-            {projects.map((p) => (
-              <tr key={p.id}>
-                <td>{p.name}</td>
-                <td className="hide-sm muted">{p.createdAt.toLocaleDateString()}</td>
-                <td style={{ textAlign: "right" }}>
-                  <ActionButton method="DELETE" path={`/api/v1/projects/${p.id}`} label="Delete" confirm={`Delete project "${p.name}"? Its subdomains stay reserved.`} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="table-wrap">
+          <table className="table">
+            <thead><tr><th>Name</th><th>Subdomains</th><th className="hide-sm">Created</th><th className="actions" /></tr></thead>
+            <tbody>
+              {projects.map((p) => (
+                <tr key={p.id}>
+                  <td style={{ fontWeight: 550 }}>{p.name}</td>
+                  <td className="muted">{count(p.id)}</td>
+                  <td className="hide-sm muted">{p.createdAt.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}</td>
+                  <td className="actions">
+                    <ActionButton
+                      method="DELETE" path={`/api/v1/projects/${p.id}`} label="Delete" success={`Deleted “${p.name}”`}
+                      confirm={{ title: `Delete project “${p.name}”?`, body: "Its subdomains stay reserved.", confirm: "Delete project" }}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </>
   );

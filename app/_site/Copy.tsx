@@ -1,38 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { copyText, CopyButton } from "./ui";
 
-async function copy(text: string): Promise<boolean> {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/** One-line install snippet with a copy button. */
+/** Big install snippet with a copy button (landing page). */
 export function CopyCommand({ command }: { command: string }) {
-  const [done, setDone] = useState(false);
   return (
-    <div className="copy-cmd">
+    <div className="lp-install">
       <code>
         <span className="prompt" aria-hidden="true">$ </span>
         {command}
       </code>
-      <button
-        type="button"
-        className="copy-btn"
-        aria-label={`Copy "${command}"`}
-        onClick={async () => {
-          if (await copy(command)) {
-            setDone(true);
-            setTimeout(() => setDone(false), 1500);
-          }
-        }}
-      >
-        {done ? "Copied" : "Copy"}
-      </button>
+      <CopyButton text={command} />
     </div>
   );
 }
@@ -40,9 +19,8 @@ export function CopyCommand({ command }: { command: string }) {
 /** Adds copy buttons to every rendered code block inside `.prose`. */
 export function CodeCopyButtons() {
   useEffect(() => {
-    const blocks = document.querySelectorAll<HTMLDivElement>(".prose .code-block");
     const added: HTMLButtonElement[] = [];
-    blocks.forEach((block) => {
+    document.querySelectorAll<HTMLDivElement>(".prose .code-block").forEach((block) => {
       if (block.querySelector(".copy-btn")) return;
       const btn = document.createElement("button");
       btn.type = "button";
@@ -50,10 +28,13 @@ export function CodeCopyButtons() {
       btn.textContent = "Copy";
       btn.setAttribute("aria-label", "Copy code");
       btn.addEventListener("click", async () => {
-        const text = block.querySelector("code")?.innerText ?? "";
-        if (await copy(text)) {
+        if (await copyText(block.querySelector("code")?.innerText ?? "")) {
           btn.textContent = "Copied";
-          setTimeout(() => (btn.textContent = "Copy"), 1500);
+          btn.classList.add("done");
+          setTimeout(() => {
+            btn.textContent = "Copy";
+            btn.classList.remove("done");
+          }, 1500);
         }
       });
       block.appendChild(btn);

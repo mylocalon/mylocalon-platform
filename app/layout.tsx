@@ -1,4 +1,7 @@
-import type { Metadata } from "next";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
+import type { Metadata, Viewport } from "next";
+import { ConfirmHost, Toaster } from "./_site/ui";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,10 +11,27 @@ export const metadata: Metadata = {
   openGraph: { siteName: "mylocalon", type: "website" },
 };
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbfbfd" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090f" },
+  ],
+};
+
+// Applies the saved theme before first paint (no light/dark flash).
+const THEME_SCRIPT = `try{var t=localStorage.getItem("ml-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
+      <body>
+        {children}
+        <Toaster />
+        <ConfirmHost />
+      </body>
     </html>
   );
 }
