@@ -41,36 +41,62 @@ export function ActionButton(props: {
   );
 }
 
-/** Single-field create form (projects, subdomains), optional suffix and select. */
+/** Mirrors src/domain/subdomain.ts so the form can validate as you type. */
+const LABEL = /^[a-z0-9]([a-z0-9-]{1,61}[a-z0-9])$/;
+const BLOCKED = new Set(["www", "api", "admin", "gateway", "app", "dashboard", "mail", "smtp", "status", "docs", "static", "cdn", "auth", "login", "billing", "support", "help", "blog", "root", "ns1", "ns2"]);
+
+function subdomainProblem(v: string): string | null {
+  if (!v) return null;
+  if (/[^a-z0-9-]/.test(v)) return "Only lowercase letters, numbers and hyphens";
+  if (v.length < 3) return "At least 3 characters";
+  if (v.length > 63) return "At most 63 characters";
+  if (v.startsWith("-") || v.endsWith("-")) return "Can't start or end with a hyphen";
+  if (v.includes("--")) return "No double hyphens";
+  if (BLOCKED.has(v)) return `“${v}” is reserved for mylocalon`;
+  return LABEL.test(v) ? null : "Not a valid name";
+}
+
+/**
+ * Single-field create form (projects, subdomains). Props are plain data so a
+ * Server Component can render it: `success` is a template where {value} is
+ * replaced with what was entered.
+ */
 export function CreateForm(props: {
   path: string;
   field: string;
   placeholder: string;
   label: string;
-  success: (value: string) => string;
+  success: string;
   suffix?: string;
+  validate?: "subdomain";
   extra?: { name: string; label: string; options: { value: string; label: string }[] };
 }) {
   const router = useRouter();
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
+  const [value, setValue] = useState("");
+  const problem = props.validate === "subdomain" ? subdomainProblem(value) : null;
+  const ok = props.validate === "subdomain" && value.length > 0 && !problem;
+
   return (
     <form
       className="card"
+      noValidate
       onSubmit={async (e) => {
         e.preventDefault();
+        if (problem || !value.trim()) return;
         const form = e.currentTarget;
         const f = new FormData(form);
-        const value = String(f.get(props.field) ?? "");
-        const body: Record<string, unknown> = { [props.field]: value };
+        const body: Record<string, unknown> = { [props.field]: value.trim() };
         const extra = props.extra && f.get(props.extra.name);
         if (props.extra && extra) body[props.extra.name] = extra;
         setBusy(true);
         setError(undefined);
         try {
           await api("POST", props.path, body);
+          toast(props.success.replace("{value}", value.trim()));
+          setValue("");
           form.reset();
-          toast(props.success(value));
           router.refresh();
         } catch (err) {
           setError((err as Error).message);
@@ -81,12 +107,26 @@ export function CreateForm(props: {
     >
       <div className="row">
         {props.suffix ? (
-          <div className="input-group" style={{ flex: "1 1 260px" }}>
-            <input name={props.field} placeholder={props.placeholder} required aria-label={props.placeholder} autoComplete="off" spellCheck={false} />
+          <div className="input-group" data-invalid={problem ? "" : undefined} style={{ flex: "1 1 260px" }}>
+            <input
+              name={props.field}
+              value={value}
+              onChange={(e) => { setValue(props.validate === "subdomain" ? e.target.value.toLowerCase().replace(/\s/g, "") : e.target.value); setError(undefined); }}
+              placeholder={props.placeholder}
+              aria-label={props.placeholder}
+              aria-invalid={problem ? true : undefined}
+              aria-describedby={`${props.field}-hint`}
+              autoComplete="off" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="done"
+              maxLength={63}
+            />
             <span className="addon">{props.suffix}</span>
           </div>
         ) : (
-          <input name={props.field} placeholder={props.placeholder} required aria-label={props.placeholder} style={{ flex: "1 1 260px" }} />
+          <input
+            name={props.field} value={value} onChange={(e) => { setValue(e.target.value); setError(undefined); }}
+            placeholder={props.placeholder} aria-label={props.placeholder} maxLength={64} enterKeyHint="done"
+            style={{ flex: "1 1 260px" }}
+          />
         )}
         {props.extra && props.extra.options.length > 0 && (
           <select name={props.extra.name} aria-label={props.extra.label} defaultValue="">
@@ -94,8 +134,13 @@ export function CreateForm(props: {
             {props.extra.options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
         )}
-        <button className="btn btn-primary" disabled={busy}><IconPlus size={16} /> {props.label}</button>
+        <button className="btn btn-primary" disabled={busy || !!problem || !value.trim()}><IconPlus size={16} /> {props.label}</button>
       </div>
+      {props.validate === "subdomain" && (
+        <p id={`${props.field}-hint`} className={`hint${problem ? " bad" : ok ? " ok" : ""}`} aria-live="polite">
+          {problem ?? (ok ? `✓ ${value}${props.suffix ?? ""} looks good` : "3–63 characters: lowercase letters, numbers and single hyphens")}
+        </p>
+      )}
       {error && <p className="err" role="alert">{error}</p>}
     </form>
   );

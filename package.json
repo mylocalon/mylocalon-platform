@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "db:migrate": "node --experimental-strip-types scripts/migrate.ts",
-    "keys:gen": "node --experimental-strip-types scripts/gen-keys.ts"
+    "keys:gen": "node --experimental-strip-types scripts/gen-keys.ts",
+    "smoke": "node --experimental-strip-types scripts/smoke.ts"
   },
   "dependencies": {
     "@node-rs/argon2": "^2.0.2",
@@ -22,6 +23,7 @@
     "pino": "^9.5.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "sonner": "^2.0.8",
     "zod": "^3.23.8"
   },
   "devDependencies": {

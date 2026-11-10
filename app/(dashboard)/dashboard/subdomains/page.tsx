@@ -23,7 +23,7 @@ export default async function SubdomainsPage() {
       </div>
       <CreateForm
         path="/api/v1/subdomains" field="name" placeholder="myapp" label="Reserve" suffix={`.${c.BASE_DOMAIN}`}
-        success={(v) => `Reserved ${v.toLowerCase()}.${c.BASE_DOMAIN}`}
+        validate="subdomain" success={`Reserved {value}.${c.BASE_DOMAIN}`}
         extra={{ name: "projectId", label: "Project", options: projects.map((p) => ({ value: p.id, label: p.name })) }}
       />
       <div className="section-title">Yours</div>

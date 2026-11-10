@@ -18,19 +18,22 @@ export default async function ProjectsPage() {
           <p>Group reserved subdomains, e.g. per client or app.</p>
         </div>
       </div>
-      <CreateForm path="/api/v1/projects" field="name" placeholder="Project name" label="Create" success={(v) => `Created project “${v}”`} />
+      <CreateForm path="/api/v1/projects" field="name" placeholder="Project name" label="Create" success="Created project “{value}”" />
       <div className="section-title">Yours</div>
       {projects.length === 0 ? (
         <div className="empty"><span className="empty-icon"><IconFolder /></span><strong>No projects yet</strong><span>Projects are optional — they just keep subdomains organised.</span></div>
       ) : (
         <div className="table-wrap">
           <table className="table">
-            <thead><tr><th>Name</th><th>Subdomains</th><th className="hide-sm">Created</th><th className="actions" /></tr></thead>
+            <thead><tr><th>Name</th><th className="hide-sm">Subdomains</th><th className="hide-sm">Created</th><th className="actions" /></tr></thead>
             <tbody>
               {projects.map((p) => (
                 <tr key={p.id}>
-                  <td style={{ fontWeight: 550 }}>{p.name}</td>
-                  <td className="muted">{count(p.id)}</td>
+                  <td className="wrap-anywhere">
+                    <span style={{ fontWeight: 550 }}>{p.name}</span>
+                    <div className="show-sm muted" style={{ fontSize: 13 }}>{count(p.id) === 1 ? "1 subdomain" : `${count(p.id)} subdomains`}</div>
+                  </td>
+                  <td className="hide-sm muted" style={{ fontVariantNumeric: "tabular-nums" }}>{count(p.id)}</td>
                   <td className="hide-sm muted">{p.createdAt.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}</td>
                   <td className="actions">
                     <ActionButton

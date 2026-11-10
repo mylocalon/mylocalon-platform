@@ -3,6 +3,7 @@ import { currentUser } from "@/auth/current";
 import { searchIndex } from "@/docs/search";
 import { IconGitHub } from "./icons";
 import { Logo, Wordmark } from "./Logo";
+import { ScrollEdge } from "./ScrollEdge";
 import { SearchButton } from "./Search";
 import { ThemeToggle } from "./ui";
 
@@ -30,6 +31,7 @@ export async function SiteHeader() {
   const [user, stars] = await Promise.all([currentUser(), githubStars()]);
   return (
     <header className="site-header">
+      <ScrollEdge />
       <div className="site-wrap site-header-row">
         <Link href="/" className="site-brand" aria-label="mylocalon home">
           <Logo size={28} id="ml-head" /> <Wordmark />

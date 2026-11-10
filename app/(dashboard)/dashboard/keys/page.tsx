@@ -25,12 +25,15 @@ export default async function KeysPage() {
       ) : (
         <div className="table-wrap">
           <table className="table">
-            <thead><tr><th>Name</th><th>Key</th><th className="hide-sm">Created</th><th className="hide-sm">Last used</th><th className="actions" /></tr></thead>
+            <thead><tr><th>Name</th><th className="hide-sm">Key</th><th className="hide-sm">Created</th><th className="hide-sm">Last used</th><th className="actions" /></tr></thead>
             <tbody>
               {keys.map((k) => (
                 <tr key={k.id} style={k.revokedAt ? { opacity: 0.55 } : undefined}>
-                  <td style={{ fontWeight: 550 }}>{k.name}</td>
-                  <td><code>{k.prefix}…</code></td>
+                  <td className="wrap-anywhere">
+                    <span style={{ fontWeight: 550 }}>{k.name}</span>
+                    <div className="show-sm"><code className="nowrap">{k.prefix}…</code></div>
+                  </td>
+                  <td className="hide-sm"><code className="nowrap">{k.prefix}…</code></td>
                   <td className="hide-sm muted">{when(k.createdAt)}</td>
                   <td className="hide-sm muted">{when(k.lastUsedAt)}</td>
                   <td className="actions">

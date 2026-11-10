@@ -75,7 +75,7 @@ export default async function TunnelsPage() {
               <div className="tunnel" key={t.tunnelId}>
                 <span className={`tunnel-icon${ok ? "" : " warn"}`}>{ok ? <IconTunnel size={18} /> : <IconRefresh size={18} />}</span>
                 <div className="tunnel-main">
-                  <a className="tunnel-url" href={url} target="_blank" rel="noreferrer">{url.replace(/^https?:\/\//, "")}</a>
+                  <a className="tunnel-url" href={url} target="_blank" rel="noreferrer" title={url}>{url.replace(/^https?:\/\//, "")}</a>
                   <div className="tunnel-meta">
                     {ok ? <span className="ok">● Online</span> : <span className="warn">● Reconnecting</span>} · started {ago(t.since)}
                   </div>

@@ -12,6 +12,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover", // paint edge-to-edge; content pads with env(safe-area-inset-*)
+  interactiveWidget: "resizes-content",
+  colorScheme: "light dark",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#fbfbfd" },
     { media: "(prefers-color-scheme: dark)", color: "#09090f" },

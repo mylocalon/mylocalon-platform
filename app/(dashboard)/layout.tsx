@@ -5,6 +5,12 @@ import { Logo, Wordmark } from "../_site/Logo";
 import { ThemeToggle } from "../_site/ui";
 import { currentUser } from "@/auth/current";
 
+function initial(email: string): string {
+  const seg = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+  const first = seg.segment(email.trim())[Symbol.iterator]().next().value?.segment ?? "?";
+  return first.toLocaleUpperCase();
+}
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser(); // pages enforce auth with requireUser()
   return (
@@ -18,7 +24,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <div style={{ padding: "0 8px 6px" }}><ThemeToggle /></div>
         {user && (
           <div className="user-box">
-            <span className="avatar" aria-hidden="true">{user.email.slice(0, 1).toUpperCase()}</span>
+            <span className="avatar" aria-hidden="true">{initial(user.email)}</span>
             <span className="email" title={user.email}>{user.email}</span>
             <LogoutButton />
           </div>
