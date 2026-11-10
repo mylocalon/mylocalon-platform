@@ -1,6 +1,7 @@
 ---
 title: REST API
-description: Manage keys, subdomains and tunnels over HTTP.
+description: mylocalon REST API reference: authenticate with an API key, issue tunnel tokens, and manage keys, reserved subdomains, projects and tunnel history.
+updated: 2026-11-10
 ---
 
 Base URL: `https://mylocalon.com/api/v1`. JSON in, JSON out.

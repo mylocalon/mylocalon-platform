@@ -1,6 +1,7 @@
 ---
 title: Dashboard & API keys
-description: Watch tunnels live and manage access.
+description: Use the mylocalon dashboard to watch tunnels live, read connection history, create and revoke API keys, and organise reserved subdomains in projects.
+updated: 2026-11-10
 ---
 
 Log in at **[mylocalon.com/dashboard](https://mylocalon.com/dashboard)**.

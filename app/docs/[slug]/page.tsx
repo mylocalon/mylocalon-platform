@@ -13,7 +13,15 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const doc = loadDoc((await params).slug);
   if (!doc) return {};
-  return { title: `${doc.title} · mylocalon docs`, description: doc.description };
+  // /docs renders the introduction, so the two share one canonical URL.
+  const path = doc.slug === "introduction" ? "/docs" : `/docs/${doc.slug}`;
+  return {
+    title: `${doc.title} — mylocalon docs`,
+    description: doc.description,
+    alternates: { canonical: path, types: { "text/markdown": `/docs/${doc.slug}.md` } },
+    openGraph: { type: "article", url: path, images: ["/opengraph-image.png"], title: `${doc.title} — mylocalon docs`, description: doc.description, ...(doc.updated ? { modifiedTime: doc.updated } : {}) },
+    twitter: { card: "summary_large_image", images: ["/twitter-image.png"], title: `${doc.title} — mylocalon docs`, description: doc.description },
+  };
 }
 
 export default async function DocPage({ params }: { params: Promise<{ slug: string }> }) {

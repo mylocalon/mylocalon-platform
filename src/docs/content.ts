@@ -7,6 +7,8 @@ export interface DocPage {
   slug: string;
   title: string;
   description: string;
+  updated?: string; // ISO date from front matter
+  markdown: string;
   html: string;
   toc: { id: string; text: string; depth: 2 | 3 }[];
   prev?: { slug: string; title: string };
@@ -75,6 +77,8 @@ export function loadDoc(slug: string): DocPage | null {
     slug,
     title: meta["title"] ?? DOCS_ORDER[idx]!.title,
     description: meta["description"] ?? "",
+    ...(meta["updated"] ? { updated: meta["updated"] } : {}),
+    markdown: body,
     html,
     toc,
     ...(prev ? { prev } : {}),

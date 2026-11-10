@@ -6,6 +6,10 @@ const config = {
   poweredByHeader: false,
   // Native / worker-thread deps must stay out of the server bundle.
   serverExternalPackages: ["@node-rs/argon2", "pino", "pg"],
+  async rewrites() {
+    // Markdown copy of each docs page for LLMs and tools: /docs/quickstart.md
+    return [{ source: "/docs/:slug([a-z0-9-]+)\\.md", destination: "/docs-md/:slug" }];
+  },
   async headers() {
     return [
       {

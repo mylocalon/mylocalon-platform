@@ -1,6 +1,7 @@
 ---
 title: Self-hosting
-description: Run mylocalon on your own server and domain.
+description: Run mylocalon on your own Ubuntu server and domain: requirements, DNS and wildcard HTTPS, the one-command installer, and pointing the CLI at it.
+updated: 2026-11-10
 ---
 
 mylocalon is open source. Everything that powers mylocalon.com runs on a single

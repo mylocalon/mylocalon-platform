@@ -1,6 +1,7 @@
 ---
 title: Introduction
-description: What mylocalon is and when to use it.
+description: mylocalon is a free, open-source tunnel that gives localhost a public HTTPS URL with one command. See what it does and when to use it.
+updated: 2026-11-10
 ---
 
 **mylocalon gives the app running on your computer a public HTTPS URL.** Run one

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { currentUser } from "@/auth/current";
+import { AUTHORS } from "@/lib/site";
 import { searchIndex } from "@/docs/search";
-import { IconGitHub } from "./icons";
+import { IconGitHub, IconLinkedIn } from "./icons";
 import { Logo, Wordmark } from "./Logo";
 import { ScrollEdge } from "./ScrollEdge";
 import { SearchButton } from "./Search";
@@ -98,8 +99,18 @@ export function SiteFooter() {
             </div>
           </nav>
         </div>
+        <div className="footer-credits" aria-label="Developers">
+          <span className="muted">Built by</span>
+          {AUTHORS.map((a) => (
+            <span key={a.name} className="credit">
+              <span className="credit-name">{a.name}</span>
+              <a href={a.linkedin} target="_blank" rel="author noopener noreferrer" aria-label={`${a.name} on LinkedIn`} title={`${a.name} on LinkedIn`}><IconLinkedIn /></a>
+              <a href={a.github} target="_blank" rel="author noopener noreferrer" aria-label={`${a.name} on GitHub`} title={`${a.name} on GitHub`}><IconGitHub /></a>
+            </span>
+          ))}
+        </div>
         <div className="footer-note">
-          <span>© {new Date().getFullYear()} mylocalon</span>
+          <span>© {new Date().getFullYear()} mylocalon · Open source under the MIT license</span>
           <span>Made for developers who ship from localhost.</span>
         </div>
       </div>

@@ -4,7 +4,7 @@
 import { randomBytes } from "node:crypto";
 
 const BASE = process.argv[2] ?? "http://localhost:3001";
-const pages = ["/", "/docs", "/docs/quickstart", "/docs/troubleshooting", "/login", "/signup", "/robots.txt", "/sitemap.xml"];
+const pages = ["/", "/docs", "/docs/quickstart", "/docs/mcp", "/docs/troubleshooting", "/docs/mcp.md", "/login", "/signup", "/robots.txt", "/sitemap.xml", "/llms.txt", "/llms-full.txt"];
 const authed = ["/dashboard", "/dashboard/keys", "/dashboard/subdomains", "/dashboard/projects", "/device", "/device?code=ABCD-EFGH"];
 
 let failed = 0;

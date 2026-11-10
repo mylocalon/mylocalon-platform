@@ -1,6 +1,7 @@
 ---
 title: Quickstart
-description: Your first public URL in two minutes.
+description: Share a local app on a public HTTPS URL in two minutes: install the mylocalon CLI, log in once, run mylocalon http 3000 and open the link anywhere.
+updated: 2026-11-10
 ---
 
 This guide assumes you've [installed the CLI](/docs/installation).

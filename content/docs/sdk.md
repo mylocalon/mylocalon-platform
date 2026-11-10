@@ -1,6 +1,7 @@
 ---
 title: Node.js SDK
-description: Open tunnels from your own code.
+description: Open mylocalon tunnels from Node.js code with @mylocalon/sdk-node: install, a full example, options, events and token refresh for long-running apps.
+updated: 2026-11-10
 ---
 
 The CLI is built on **`@mylocalon/sdk-node`** — use it directly to start tunnels

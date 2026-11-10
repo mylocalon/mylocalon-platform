@@ -1,6 +1,7 @@
 ---
 title: Limits
-description: Free plan limits and what isn't supported yet.
+description: mylocalon free plan limits — 5 tunnels, 5 reserved subdomains, 10 MB requests, 30 s timeouts, rate limits — and what is not supported yet.
+updated: 2026-11-10
 ---
 
 ## Free plan

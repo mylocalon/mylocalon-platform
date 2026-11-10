@@ -2,13 +2,22 @@ import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata, Viewport } from "next";
 import { ConfirmHost, Toaster } from "./_site/ui";
+import { AUTHORS, SITE } from "@/lib/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "mylocalon",
-  description: "Your localhost, on the internet: public HTTPS URLs for local apps.",
+  title: { default: "mylocalon — Open-source localhost tunnels with HTTPS", template: "%s" },
+  description: SITE.shortDescription,
+  applicationName: SITE.name,
   metadataBase: new URL(process.env["BASE_URL"] ?? "https://mylocalon.com"),
-  openGraph: { siteName: "mylocalon", type: "website" },
+  authors: AUTHORS.map((a) => ({ name: a.name, url: a.linkedin })),
+  creator: AUTHORS.map((a) => a.name).join(", "),
+  publisher: SITE.name,
+  category: "technology",
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large", "max-video-preview": -1 } },
+  openGraph: { siteName: SITE.name, type: "website", locale: "en_US" },
+  twitter: { card: "summary_large_image" },
+  formatDetection: { telephone: false, email: false, address: false },
 };
 
 export const viewport: Viewport = {

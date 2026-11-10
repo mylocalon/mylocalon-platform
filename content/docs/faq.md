@@ -1,6 +1,7 @@
 ---
 title: FAQ
-description: Quick answers.
+description: Answers about mylocalon: pricing, how long URLs last, HTTPS local servers, WebSockets, MCP servers, custom domains, privacy and ngrok comparison.
+updated: 2026-11-10
 ---
 
 ## Is mylocalon free?
@@ -20,6 +21,12 @@ Yes — anywhere Node.js 20+ runs.
 ## Can I share an HTTPS local server?
 
 Yes: `mylocalon http https://localhost:8443`. Self-signed certificates are fine.
+
+## Can I use it for MCP servers?
+
+Yes. Run your MCP server with the Streamable HTTP transport (JSON responses),
+then `mylocalon http <port>` and give your AI client the
+`https://….mylocalon.com/mcp` URL. See [Share a local MCP server](/docs/mcp).
 
 ## Do WebSockets work?
 

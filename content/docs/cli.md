@@ -1,6 +1,7 @@
 ---
 title: CLI reference
-description: Every mylocalon command and option.
+description: Reference for every mylocalon CLI command and flag: http, login, status, logout and version, plus config files, environment variables and exit codes.
+updated: 2026-11-10
 ---
 
 ## mylocalon http

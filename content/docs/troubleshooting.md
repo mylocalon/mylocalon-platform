@@ -1,6 +1,7 @@
 ---
 title: Troubleshooting
-description: Fixes for the most common problems.
+description: Fix common mylocalon problems: command not found after npm install, login codes, 404/502/504 errors, redirects to localhost and tunnel error codes.
+updated: 2026-11-10
 ---
 
 ## Install

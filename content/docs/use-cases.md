@@ -1,6 +1,7 @@
 ---
 title: Use cases
-description: Recipes for webhooks, demos, mobile testing and more.
+description: Step-by-step recipes for mylocalon: receive webhooks locally, share MCP servers with AI assistants, demo to clients, test on phones and OAuth callbacks.
+updated: 2026-11-10
 ---
 
 ## Receive webhooks on your laptop
@@ -22,6 +23,20 @@ events to a public HTTPS URL. Point them at your machine instead of deploying:
 
 > **Tip:** providers retry failed deliveries. If your app was stopped, just
 > start it again; the retries arrive at the same URL.
+
+## Share a local MCP server with an AI assistant
+
+Building tools for Claude, ChatGPT or another AI client? Cloud assistants can't
+reach `localhost`. Give your MCP server a public HTTPS URL and add it as a
+remote connector — no deploy:
+
+```bash
+mylocalon http 8000 --subdomain my-mcp
+# MCP endpoint: https://my-mcp.mylocalon.com/mcp
+```
+
+Use the Streamable HTTP transport with JSON responses. Full guide:
+[Share a local MCP server](/docs/mcp).
 
 ## Show a client or teammate your work
 

@@ -4,7 +4,7 @@ import { AuthForm } from "../../_components/AuthForm";
 import { AuthShell } from "../../_site/AuthShell";
 import { currentUser, safeNext } from "@/auth/current";
 
-export const metadata = { title: "Log in · mylocalon" };
+export const metadata = { title: "Log in · mylocalon" , robots: { index: false, follow: true } };
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   const next = safeNext((await searchParams).next);

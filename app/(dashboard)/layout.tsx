@@ -11,6 +11,8 @@ function initial(email: string): string {
   return first.toLocaleUpperCase();
 }
 
+export const metadata = { robots: { index: false, follow: false } };
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser(); // pages enforce auth with requireUser()
   return (

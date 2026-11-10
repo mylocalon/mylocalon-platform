@@ -1,6 +1,7 @@
 ---
 title: Security
-description: How your traffic and credentials are protected.
+description: How mylocalon protects your traffic and account: HTTPS and TLS tunnels, hashed API keys, short-lived tokens, what the server sees, and safe usage.
+updated: 2026-11-10
 ---
 
 ## Your traffic

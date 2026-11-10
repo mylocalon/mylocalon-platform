@@ -1,6 +1,7 @@
 ---
 title: How it works
-description: What happens between a visitor's browser and your laptop.
+description: How mylocalon routes a public HTTPS request through a secure WebSocket tunnel to your laptop, which headers your app sees, and how reconnects work.
+updated: 2026-11-10
 ---
 
 ```text

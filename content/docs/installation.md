@@ -1,6 +1,7 @@
 ---
 title: Installation
-description: Install the mylocalon CLI on macOS, Linux or Windows.
+description: Install the mylocalon CLI with npm on macOS, Linux or Windows (Node.js 20+), log in, update or uninstall it, and fix common install problems.
+updated: 2026-11-10
 ---
 
 The CLI is distributed on npm and needs **Node.js 20 or newer**.

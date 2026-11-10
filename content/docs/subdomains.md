@@ -1,6 +1,7 @@
 ---
 title: Reserved subdomains
-description: Keep the same URL every time.
+description: Reserve a subdomain like myapp.mylocalon.com to get the same HTTPS URL every time — ideal for webhooks and OAuth callbacks. Naming rules and limits.
+updated: 2026-11-10
 ---
 
 By default each `mylocalon http` run gets a random address like

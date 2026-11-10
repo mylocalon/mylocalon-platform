@@ -12,6 +12,7 @@ export const DOCS_NAV: { title: string; items: { slug: string; title: string }[]
     title: "Guides",
     items: [
       { slug: "use-cases", title: "Use cases" },
+      { slug: "mcp", title: "Share an MCP server" },
       { slug: "subdomains", title: "Reserved subdomains" },
       { slug: "dashboard", title: "Dashboard & API keys" },
     ],

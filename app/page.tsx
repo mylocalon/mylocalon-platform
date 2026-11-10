@@ -1,20 +1,36 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CopyCommand } from "./_site/Copy";
+import { JsonLd } from "./_site/JsonLd";
 import {
   IconArrowRight, IconCheck, IconCode, IconGitHub, IconLock, IconPhone,
   IconShield, IconUsers, IconWebhook,
 } from "./_site/icons";
 import { GITHUB_URL, SiteFooter, SiteHeader } from "./_site/SiteHeader";
 import { TypingTerminal } from "./_site/Terminal";
+import { AUTHORS, SITE, siteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "mylocalon — your localhost, on the internet",
+  title: { absolute: "mylocalon — Open-source localhost tunnels with HTTPS" },
   description:
-    "Give the app on your computer a public HTTPS URL with one command. For webhooks, client demos and testing on real phones. Free and open source.",
+    "Expose localhost with one command. Free, open-source ngrok alternative: a public HTTPS URL for webhooks, demos, phone testing and MCP servers.",
+  alternates: { canonical: "/" },
+  openGraph: { url: "/", title: "mylocalon — your localhost, on the internet", description: SITE.shortDescription, images: ["/opengraph-image.png"] },
+  twitter: { card: "summary_large_image", images: ["/twitter-image.png"] },
 };
 
+// Visible on the page and mirrored in FAQPage structured data (answers must match).
+const FAQ = [
+  { q: "What is mylocalon?", a: "mylocalon is a free, open-source tunneling tool. It gives an app running on your computer a public HTTPS URL, so anyone on the internet can reach it without deploying or opening router ports." },
+  { q: "How do I expose localhost to the internet?", a: "Install the CLI with npm install -g mylocalon, run mylocalon login once, then run mylocalon http 3000. You get a URL like https://abc123xy.mylocalon.com that forwards to http://localhost:3000." },
+  { q: "Is mylocalon free?", a: "Yes. The hosted service has a free plan with 5 concurrent tunnels, 5 reserved subdomains and HTTPS on every URL, and the full stack is open source if you want to self-host it." },
+  { q: "Can I share a local MCP server with Claude or ChatGPT?", a: "Yes. Run your MCP server with the Streamable HTTP transport and JSON responses, start mylocalon http <port>, and add the https://<name>.mylocalon.com/mcp URL to your AI client as a remote connector." },
+  { q: "Is mylocalon an ngrok alternative?", a: "Yes. Like ngrok it gives localhost a public HTTPS URL; mylocalon is fully open source, has a free plan and can be self-hosted on your own server and domain." },
+  { q: "Do WebSockets work through mylocalon?", a: "Not yet. Regular HTTP pages, APIs, webhooks and MCP request/response traffic work; WebSocket forwarding and response streaming are planned." },
+];
+
 const USE_CASES = [
+  { icon: <IconCode />, title: "MCP servers for AI assistants", body: "Give the MCP server on your laptop a public HTTPS URL and add it to Claude, ChatGPT or any MCP client as a remote connector — no deploy.", cmd: "mylocalon http 8000 --subdomain my-mcp" },
   { icon: <IconWebhook />, title: "Webhooks", body: "Point Stripe, Razorpay, GitHub or Slack at your laptop and debug events with breakpoints.", cmd: "mylocalon http 3000 --subdomain hooks" },
   { icon: <IconUsers />, title: "Client demos", body: "Send a link instead of deploying to staging. They see your latest code as you save.", cmd: "mylocalon http 5173" },
   { icon: <IconPhone />, title: "Real-device testing", body: "Open your site on any phone, on any network — with the HTTPS that camera and location APIs need.", cmd: "mylocalon http 8080" },
@@ -26,6 +42,45 @@ const PLAN = ["5 tunnels at once", "5 reserved subdomains", "HTTPS on every URL"
 export default function Landing() {
   return (
     <div className="site">
+      <JsonLd data={[
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: SITE.name,
+          description: SITE.description,
+          url: siteUrl("/"),
+          applicationCategory: "DeveloperApplication",
+          operatingSystem: "macOS, Linux, Windows",
+          softwareVersion: SITE.version,
+          softwareRequirements: "Node.js 20 or newer",
+          downloadUrl: SITE.npm,
+          installUrl: siteUrl("/docs/installation"),
+          license: "https://opensource.org/license/mit",
+          isAccessibleForFree: true,
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+          featureList: [
+            "Public HTTPS URL for localhost", "Reserved subdomains", "Automatic reconnect with the same URL",
+            "Webhook testing", "Share local MCP servers with AI assistants", "Dashboard and API keys", "Self-hostable",
+          ],
+          author: AUTHORS.map((a) => ({ "@type": "Person", name: a.name, url: a.linkedin, sameAs: [a.linkedin, a.github] })),
+          sameAs: [SITE.github, SITE.npm],
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: SITE.name,
+          url: siteUrl("/"),
+          logo: siteUrl("/brand/app-icon-512.png"),
+          sameAs: [SITE.github, SITE.npm],
+          founder: AUTHORS.map((a) => ({ "@type": "Person", name: a.name, sameAs: [a.linkedin, a.github] })),
+        },
+        { "@context": "https://schema.org", "@type": "WebSite", name: SITE.name, url: siteUrl("/"), inLanguage: "en" },
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: FAQ.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+        },
+      ]} />
       <SiteHeader />
 
       <main>
@@ -42,8 +97,9 @@ export default function Landing() {
                 <span className="grad-text">on the internet.</span>
               </h1>
               <p className="lp-sub">
-                Give the app on your computer a public HTTPS URL with one command. Test webhooks, show clients your work and
-                try your site on real phones — no deploy, no router setup.
+                <strong>mylocalon</strong> is a free, open-source tunnel that gives the app on your computer a public HTTPS URL
+                with one command. Test webhooks, share MCP servers with AI assistants, show clients your work and try your site
+                on real phones — no deploy, no router setup.
               </p>
               <div className="lp-cta">
                 <Link href="/signup?next=/dashboard" className="btn btn-primary btn-lg">Start for free <IconArrowRight size={16} /></Link>
@@ -54,6 +110,7 @@ export default function Landing() {
             <div className="lp-demo">
               <TypingTerminal />
             </div>
+
           </div>
         </section>
 
@@ -146,7 +203,7 @@ export default function Landing() {
           <div className="site-wrap">
             <span className="lp-kicker">Use cases</span>
             <h2 className="lp-h2">What people use it for</h2>
-            <p className="lp-lead">From payment webhooks to a quick demo for a client.</p>
+            <p className="lp-lead">From payment webhooks and MCP servers to a quick demo for a client.</p>
             <div className="uc-grid">
               {USE_CASES.map((u) => (
                 <div key={u.title} className="uc">
@@ -157,7 +214,7 @@ export default function Landing() {
               ))}
             </div>
             <p style={{ textAlign: "center", marginTop: 28 }}>
-              <Link href="/docs/use-cases" className="btn btn-secondary">Step-by-step recipes <IconArrowRight size={15} /></Link>
+              <Link href="/docs/use-cases" className="btn btn-secondary">Step-by-step recipes <IconArrowRight size={15} /></Link>{" "}<Link href="/docs/mcp" className="btn btn-secondary">MCP guide <IconArrowRight size={15} /></Link>
             </p>
           </div>
         </section>
@@ -178,6 +235,23 @@ export default function Landing() {
               <ul className="plan-list">
                 {PLAN.map((p) => <li key={p}><IconCheck size={16} /> {p}</li>)}
               </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------------------------------------------------------------- FAQ */}
+        <section className="lp-section" style={{ paddingTop: 0 }} aria-labelledby="faq-title">
+          <div className="site-wrap">
+            <span className="lp-kicker">FAQ</span>
+            <h2 className="lp-h2" id="faq-title">Questions, answered</h2>
+            <p className="lp-lead">More in the <Link href="/docs/faq">full FAQ</Link>.</p>
+            <div className="faq">
+              {FAQ.map((f) => (
+                <details key={f.q} className="faq-item">
+                  <summary><h3>{f.q}</h3></summary>
+                  <p>{f.a}</p>
+                </details>
+              ))}
             </div>
           </div>
         </section>
