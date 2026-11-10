@@ -1,5 +1,5 @@
 /**
- * mylocalon mark — a location pin ("local") with a power symbol ("on").
+ * mylocalon mark — a location pin ("local") holding a globe ("on the internet").
  * `id` keeps gradient ids unique when several logos render on one page.
  */
 export function Logo({ size = 24, id = "ml" }: { size?: number; id?: string }) {
@@ -18,7 +18,11 @@ export function Logo({ size = 24, id = "ml" }: { size?: number; id?: string }) {
       </defs>
       <path d={pin} fill={`url(#${id}-g)`} />
       <path d={pin} fill={`url(#${id}-s)`} />
-      <path d="M37.3 19.9a9.2 9.2 0 1 1-10.6 0M32 15.5v10" fill="none" stroke="#fff" strokeWidth="3.6" strokeLinecap="round" />
+      <g fill="none" stroke="#fff" strokeLinecap="round">
+        <circle cx="32" cy="26.5" r="10.2" strokeWidth="3.1" />
+        <ellipse cx="32" cy="26.5" rx="4.4" ry="10.2" strokeWidth="2.54" />
+        <path d="M21.8 26.5H42.2" strokeWidth="2.54" />
+      </g>
     </svg>
   );
 }
