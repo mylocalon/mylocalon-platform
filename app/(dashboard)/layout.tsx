@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LogoutButton } from "../_components/Actions";
+import { Logo, Wordmark } from "../_site/Logo";
 import { currentUser } from "@/auth/current";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -7,7 +8,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="shell">
       <nav className="side">
-        <Link href="/" className="brand">mylocalon</Link>
+        <Link href="/" className="brand site-brand" aria-label="mylocalon home"><Logo size={26} id="ml-dash" /> <Wordmark /></Link>
         <Link href="/dashboard">Tunnels</Link>
         <Link href="/dashboard/subdomains">Subdomains</Link>
         <Link href="/dashboard/projects">Projects</Link>

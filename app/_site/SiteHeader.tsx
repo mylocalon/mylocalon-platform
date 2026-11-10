@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { currentUser } from "@/auth/current";
-import { Logo } from "./Logo";
+import { Logo, Wordmark } from "./Logo";
 
 export const GITHUB_URL = "https://github.com/mylocalon";
 
@@ -9,8 +9,8 @@ export async function SiteHeader() {
   return (
     <header className="site-header">
       <div className="site-wrap site-header-row">
-        <Link href="/" className="site-brand">
-          <Logo /> mylocalon
+        <Link href="/" className="site-brand" aria-label="mylocalon home">
+          <Logo size={28} id="ml-head" /> <Wordmark />
         </Link>
         <nav className="site-nav" aria-label="Main">
           <Link href="/docs">Docs</Link>
@@ -35,8 +35,8 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="site-wrap site-footer-row">
         <div>
-          <Link href="/" className="site-brand">
-            <Logo size={18} /> mylocalon
+          <Link href="/" className="site-brand" aria-label="mylocalon home">
+            <Logo size={22} id="ml-foot" /> <Wordmark />
           </Link>
           <p className="muted">Your localhost, on the internet. Open source.</p>
         </div>
